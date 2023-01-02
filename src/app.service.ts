@@ -10,6 +10,7 @@ import {
 
 @Injectable()
 export class AppService {
+  
   getAllReports(type: ReportType) {
     const reportType =
       type === 'income' ? ReportType.INCOME : ReportType.EXPENSE;
@@ -60,7 +61,7 @@ export class AppService {
     const reportIndex = Data.reports.findIndex(
       (report) => report.id === reportToUpdate.id,
     );
-
+    
     Data.reports[reportIndex] = {
       ...Data.reports[reportIndex],
       ...requestPayload,
