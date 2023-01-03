@@ -7,23 +7,24 @@ import {
   PayloadReportType,
   ReportType,
 } from 'src/data';
+import { ReportResponseDto } from './dtos/report.dto';
 
 @Injectable()
 export class AppService {
   
-  getAllReports(type: ReportType) {
+  getAllReports(type: ReportType) : ReportResponseDto[] {
     const reportType =
       type === 'income' ? ReportType.INCOME : ReportType.EXPENSE;
-    return Data.reports.filter((report) => report.type === reportType);
+    return Data.reports.filter((report) => report.type === reportType).map((report) => new ReportResponseDto(report));
   }
 
-  getReportById(type: ReportType, id: string) {
+  getReportById(type: ReportType, id: string) : ReportResponseDto {
     const reportType =
       type === 'income' ? ReportType.INCOME : ReportType.EXPENSE;
     const report = Data.reports
       .filter((report) => report.type === reportType)
       .find((report) => report.id === id);
-    return report;
+    return new ReportResponseDto(report);
   }
 
   createReport(type: ReportType, { source, amount }: PayloadReportType) {
@@ -40,23 +41,20 @@ export class AppService {
     };
 
     Data.reports.push(newReport);
-    return newReport;
+    return new ReportResponseDto(newReport);
   }
 
   updateReport(
     type: ReportType,
     id: string,
     requestPayload: OptionalPayloadReportType,
-  ) {
+  ) :ReportResponseDto {
     const reportType =
       type === 'income' ? ReportType.INCOME : ReportType.EXPENSE;
 
     const reportToUpdate = Data.reports
       .filter((report) => report.type === reportType)
       .find((report) => report.id === id);
-
-    if (!reportToUpdate.id)
-      return { message: 'Report with given Id is not found' };
 
     const reportIndex = Data.reports.findIndex(
       (report) => report.id === reportToUpdate.id,
@@ -67,7 +65,7 @@ export class AppService {
       ...requestPayload,
     };
 
-    return Data?.reports[reportIndex];
+    return new ReportResponseDto(Data?.reports[reportIndex]);
   }
 
   deleteReport(type: ReportType, id: string) {
